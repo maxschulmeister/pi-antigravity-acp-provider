@@ -125,7 +125,7 @@ describe("model selection integration", () => {
 		try {
 			let published = false;
 			await provider.refreshModels!({ allowNetwork: true, signal: new AbortController().signal,
-				publish: async ({ update }) => { update?.(); published = true; return true; } });
+				credential: { type: "api_key", key: "test-key" }, publish: async ({ update }) => { update?.(); published = true; return true; } });
 			expect(published).toBe(true);
 			const model = provider.getModels().find((candidate) => candidate.id === "gemini-b")!;
 			expect(model).toMatchObject({ reasoning: true, thinkingLevelMap: { low: "gemini-b-low", high: "gemini-b-high" } });
@@ -150,7 +150,8 @@ describe("model selection integration", () => {
 			return true;
 		};
 		try {
-			await provider.refreshModels!({ allowNetwork: true, signal: new AbortController().signal, publish });
+			await provider.refreshModels!({ allowNetwork: true, signal: new AbortController().signal,
+				credential: { type: "api_key", key: "test-key" }, publish });
 			expect(persisted).toHaveLength(1);
 			const stored = persisted[0]!;
 			expect(stored.checkedAt).toEqual(expect.any(Number));
